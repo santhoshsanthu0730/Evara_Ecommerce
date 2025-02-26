@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: evara-frontend-deployment
+  labels:
+    app: evara-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: evara-frontend
+  template:
+    metadata:
+      labels:
+        app: evara-frontend
+    spec:
+      imagePullSecrets:
+        - name: ibm-cloud-secret # Image pull secret added here
+      containers:
+        - name: evara-frontend
+          image: icr.io/evara1/evara-frontend:latest  # Your image from IBM Cloud
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 30
+            periodSeconds: 2
+            failureThreshold: 1
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 30
+            periodSeconds: 2
+            failureThreshold: 1
+
